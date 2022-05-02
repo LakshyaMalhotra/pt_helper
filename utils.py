@@ -45,6 +45,7 @@ def time_since(since: int, percent: float) -> str:
         percent (float): Percent to the task done.
 
     Returns:
+    --------
         str: Print elapsed/remaining time to console.
     """
 
@@ -59,3 +60,39 @@ def time_since(since: int, percent: float) -> str:
     total_estimated = elapsed / percent
     remaining = total_estimated - elapsed
     return f"{as_minutes_seconds(elapsed)} (remain {as_minutes_seconds(remaining)}"
+
+
+def get_model_params(model: torch.nn.Module) -> int:
+    """Helper function to determine the total number of the trainable parameters
+    in the PyTorch model.
+
+    Args:
+    -----
+        model (torch.nn.Module): Instance of the PyTorch model being used.
+
+    Returns:
+    --------
+        int: Number of the trainable parameters.
+    """
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
+def model_details(
+    model: torch.nn.Module,
+    x: torch.Tensor,
+    input_size: tuple,
+    device: torch.device,
+):
+    """Print Keras like model details on the console.
+
+    Args:
+    -----
+        model (torch.nn.Module): Instance of the PyTorch model being used.
+        x (torch.Tensor): Dummy input.
+        input_size (tuple): Size of the input.
+    """
+    print("\t\t\t\tMODEL SUMMARY")
+    summary(model, input_size=input_size, device=device)
+    print(f"Batched input size: {x.shape}")
+    print(f"Batched output size: {model(x).shape}")
+    print(f"Model contains {get_model_params(model)} trainable parameters.")
