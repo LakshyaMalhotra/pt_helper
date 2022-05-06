@@ -4,7 +4,7 @@ from typing import Union, Tuple, Callable
 import numpy as np
 import torch
 
-import utils
+import pt_trainer.utils as utils
 
 
 class PTTrainer:
@@ -35,7 +35,7 @@ class PTTrainer:
         epoch: int,
         scheduler: Union[Callable, None] = None,
         print_every: int = 100,
-    ):
+    ) -> float:
         """Start training the model.
 
         Args:
