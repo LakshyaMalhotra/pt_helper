@@ -4,7 +4,7 @@ from typing import Union, Tuple, Callable
 import numpy as np
 import torch
 
-import pt_helper.utils as utils
+import pthelper.utils as utils
 
 
 class PTHelper:
