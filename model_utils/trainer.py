@@ -4,10 +4,10 @@ from typing import Union, Tuple, Callable
 import numpy as np
 import torch
 
-import pt_trainer.utils as utils
+import model_utils.utils as utils
 
 
-class PTTrainer:
+class ModelUtils:
     def __init__(
         self,
         model: object,

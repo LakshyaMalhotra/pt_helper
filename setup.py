@@ -5,11 +5,11 @@ with open("README.md", "r", encoding="utf-8") as desc_file:
 
 
 setup(
-    name="pt_trainer",
+    name="model_utils",
     packages=find_packages(exclude=[]),
-    version="0.1.0",
+    version="0.1.1",
     license="MIT",
-    description="pt_trainer, boilerplate code for training, logging and evaluation in PyTorch.",
+    description="model_utils - boilerplate code for training, logging and evaluation in PyTorch.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Lakshya Malhotra",
