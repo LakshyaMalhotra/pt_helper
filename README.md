@@ -4,4 +4,4 @@ A python package containing the basic boilerplate code for training and evaluati
 Apart from training and evaluation, it also contains other helper functions to perform logging stats in the console as well as Keras like model summaries using [torchinfo](https://github.com/TylerYep/torchinfo) package.
 
 ## Install
-```pip install pt_helper```
+```pip install pt-helper```

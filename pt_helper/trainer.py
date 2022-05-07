@@ -7,7 +7,7 @@ import torch
 import pt_helper.utils as utils
 
 
-class ModelUtils:
+class PTHelper:
     def __init__(
         self,
         model: object,
