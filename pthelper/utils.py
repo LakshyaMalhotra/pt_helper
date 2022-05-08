@@ -47,7 +47,7 @@ class LogParse:
         stream_handler: bool = True,
         log_exceptions: bool = True,
     ):
-        """Constructor for the logger to log the progress into a file.
+        """Log the progress into a file and console.
 
         Args:
         -----
