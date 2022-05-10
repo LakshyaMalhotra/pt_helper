@@ -14,6 +14,7 @@ class PTHelper:
         device: torch.device,
         criterion: object,
         optimizer: torch.optim.Optimizer,
+        num_classes: int = 1,
     ):
         """Trainer class containing the boilerplate code for training and evaluation.
 
@@ -23,11 +24,13 @@ class PTHelper:
             device (torch.device): Device to run training/evaluation on.
             criterion (object): Instance of the loss function being used.
             optimizer (torch.optim.Optimizer): Optimizer used during training.
+            num_classes (int): Number of classes in the classification task.
         """
         self.model = model
         self.device = device
         self.criterion = criterion
         self.optimizer = optimizer
+        self.num_classes = num_classes
 
     def train(
         self,
@@ -71,7 +74,10 @@ class PTHelper:
             y_preds = self.model(images)
 
             # loss value
-            loss = self.criterion(y_preds.view(-1), labels.type_as(y_preds))
+            if self.num_classes == 1:
+                loss = self.criterion(y_preds.view(-1), labels.type_as(y_preds))
+            else:
+                loss = self.criterion(y_preds, labels)
 
             # record loss
             losses.update(loss.item(), batch_size)
@@ -92,12 +98,13 @@ class PTHelper:
 
             # diplay results
             if (batch_idx + 1) % print_every == 0:
-                print(
-                    f"Epoch: [{epoch}][{batch_idx +1} / {len(data_loader)}] "
-                    f"Batch time: {batch_time.val:.3f} (avg. {batch_time.avg:.3f}) "
-                    f"Elapsed: {utils.time_since(start, float(batch_idx +1) / len(data_loader))} "
-                    f"Loss: {losses.val:.4f} (avg. {losses.avg:.4f})"
+                msg = (
+                    f"Epoch: [{epoch + 1}][{batch_idx + 1} / {len(data_loader)}] "
+                    + f"Batch time: {batch_time.val:.3f} (avg. {batch_time.avg:.3f}) "
+                    + f"Elapsed: {utils.time_since(start, float(batch_idx +1) / len(data_loader))} "
+                    + f"Loss: {losses.val:.4f} (avg. {losses.avg:.4f})"
                 )
+                print(msg)
 
         return losses.avg
 
@@ -119,7 +126,6 @@ class PTHelper:
         preds = []
         valid_labels = []
         start = end = time.time()
-        images_cwt = None
         for batch_idx, (images, labels) in enumerate(data_loader):
             # measure data loading time
             data_time.update(time.time() - end)
@@ -134,8 +140,10 @@ class PTHelper:
             with torch.no_grad():
                 y_preds = self.model(images)
 
-            y_preds = y_preds.view(-1)
-            loss = self.criterion(y_preds, labels.type_as(y_preds))
+            if self.num_classes == 1:
+                loss = self.criterion(y_preds.view(-1), labels.type_as(y_preds))
+            else:
+                loss = self.criterion(y_preds, labels)
 
             # update the losses
             losses.update(loss.item(), batch_size)
@@ -150,12 +158,14 @@ class PTHelper:
 
             # display results
             if (batch_idx + 1) % print_every == 0:
-                print(
-                    f"Evaluating: [{batch_idx +1} / {len(data_loader)}] "
-                    f"Batch time: {batch_time.val:.3f} (avg. {batch_time.avg:.3f}) "
-                    f"Elapsed: {utils.time_since(start, float(batch_idx +1) / len(data_loader))} "
-                    f"Loss: {losses.val:.4f} (avg. {losses.avg:.4f})"
+                msg = (
+                    f"Evaluating: [{batch_idx + 1} / {len(data_loader)}] "
+                    + f"Batch time: {batch_time.val:.3f} (avg. {batch_time.avg:.3f}) "
+                    + f"Elapsed: {utils.time_since(start, float(batch_idx +1) / len(data_loader))} "
+                    + f"Loss: {losses.val:.4f} (avg. {losses.avg:.4f})"
                 )
+                print(msg)
+                # self.logger.info(msg)
         predictions = np.concatenate(preds)
         targets = np.concatenate(valid_labels)
 
