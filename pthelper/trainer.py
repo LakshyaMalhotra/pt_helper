@@ -1,4 +1,5 @@
 import time
+import logging
 from typing import Union, Tuple, Callable
 
 import numpy as np
@@ -14,6 +15,7 @@ class PTHelper:
         device: torch.device,
         criterion: object,
         optimizer: torch.optim.Optimizer,
+        logger: Union[logging.getLogger, None] = None,
         num_classes: int = 1,
     ):
         """Trainer class containing the boilerplate code for training and evaluation.
@@ -24,12 +26,14 @@ class PTHelper:
             device (torch.device): Device to run training/evaluation on.
             criterion (object): Instance of the loss function being used.
             optimizer (torch.optim.Optimizer): Optimizer used during training.
-            num_classes (int): Number of classes in the classification task.
+            logger (Union[logging.getLogger, None]): Instance of `getLogger` to log the training stats to a file and console. Defaults to None.
+            num_classes (int): Number of classes in the classification task. Defaults to 1.
         """
         self.model = model
         self.device = device
         self.criterion = criterion
         self.optimizer = optimizer
+        self.logger = logger
         self.num_classes = num_classes
 
     def train(
@@ -75,7 +79,9 @@ class PTHelper:
 
             # loss value
             if self.num_classes == 1:
-                loss = self.criterion(y_preds.view(-1), labels.type_as(y_preds))
+                loss = self.criterion(
+                    y_preds.view(-1), labels.type_as(y_preds)
+                )
             else:
                 loss = self.criterion(y_preds, labels)
 
@@ -104,7 +110,10 @@ class PTHelper:
                     + f"Elapsed: {utils.time_since(start, float(batch_idx +1) / len(data_loader))} "
                     + f"Loss: {losses.val:.4f} (avg. {losses.avg:.4f})"
                 )
-                print(msg)
+                if self.logger is not None:
+                    self.logger.info(msg)
+                else:
+                    print(msg)
 
         return losses.avg
 
@@ -141,7 +150,9 @@ class PTHelper:
                 y_preds = self.model(images)
 
             if self.num_classes == 1:
-                loss = self.criterion(y_preds.view(-1), labels.type_as(y_preds))
+                loss = self.criterion(
+                    y_preds.view(-1), labels.type_as(y_preds)
+                )
             else:
                 loss = self.criterion(y_preds, labels)
 
@@ -164,8 +175,10 @@ class PTHelper:
                     + f"Elapsed: {utils.time_since(start, float(batch_idx +1) / len(data_loader))} "
                     + f"Loss: {losses.val:.4f} (avg. {losses.avg:.4f})"
                 )
-                print(msg)
-                # self.logger.info(msg)
+                if self.logger is not None:
+                    self.logger.info(msg)
+                else:
+                    print(msg)
         predictions = np.concatenate(preds)
         targets = np.concatenate(valid_labels)
 
