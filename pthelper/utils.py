@@ -126,7 +126,7 @@ def get_model_params(model: torch.nn.Module) -> int:
 def model_details(
     model: torch.nn.Module,
     input_size: tuple,
-    device: torch.device,
+    device: torch.device = torch.device("cpu"),
 ):
     """Print Keras like model details on the console.
 
@@ -134,11 +134,13 @@ def model_details(
     -----
         model (torch.nn.Module): Instance of the PyTorch model being used.
         input_size (tuple): Size of the input.
-        device (torch.device): cuda or CPU.
+        device (torch.device): cuda or CPU. Defaults to CPU.
     """
     print("\t\t\t\tMODEL SUMMARY")
+    model = model.to(device)
     summary(model, input_size=input_size, device=device)
     x = torch.rand(*input_size)
+    x = x.to(device)
     print(f"Batched input size: {x.shape}")
     print(f"Batched output size: {model(x).shape}")
     print(f"Model contains {get_model_params(model)} trainable parameters.")
