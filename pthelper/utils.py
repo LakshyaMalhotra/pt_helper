@@ -49,6 +49,7 @@ def get_logger(
         script_name (str): Name of the scripts outputting the logs.
         log_file (str): Name of the log file. Defaults to `logs/pthelper_{time.strftime('%Y%m%dT%H%M%S', time.localtime())}.log`.
         stream_handler (bool, optional): If true, show logs in the console. Defaults to True.
+
     Returns:
     --------
         logging.getLogger: Logger object.
@@ -124,7 +125,6 @@ def get_model_params(model: torch.nn.Module) -> int:
 
 def model_details(
     model: torch.nn.Module,
-    x: torch.Tensor,
     input_size: tuple,
     device: torch.device,
 ):
@@ -133,11 +133,12 @@ def model_details(
     Args:
     -----
         model (torch.nn.Module): Instance of the PyTorch model being used.
-        x (torch.Tensor): Dummy input.
         input_size (tuple): Size of the input.
+        device (torch.device): cuda or CPU.
     """
     print("\t\t\t\tMODEL SUMMARY")
     summary(model, input_size=input_size, device=device)
+    x = torch.rand(*input_size)
     print(f"Batched input size: {x.shape}")
     print(f"Batched output size: {model(x).shape}")
     print(f"Model contains {get_model_params(model)} trainable parameters.")
