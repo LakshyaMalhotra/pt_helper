@@ -144,7 +144,7 @@ def time_since(since: int, percent: float) -> str:
     elapsed = now - since
     total_estimated = elapsed / percent
     remaining = total_estimated - elapsed
-    return f"{as_minutes_seconds(elapsed)} (remain {as_minutes_seconds(remaining)}"
+    return f"{as_minutes_seconds(elapsed)} (remain {as_minutes_seconds(remaining)})"
 
 
 def get_model_params(model: torch.nn.Module) -> int:
