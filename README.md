@@ -5,3 +5,35 @@ Apart from training and evaluation, it also contains other helper functions to p
 
 ## Install
 ```pip install pthelper```
+
+## Usage
+**Utility functions**
+- Print model details:
+```python
+from pthelper import utils
+
+model = PyTorchModel()
+input_size = (4, 28*28)
+device = torch.device('cpu')
+utils.model_details(model, input_size, device)
+```
+
+![model_summary](assets/model_summary.png)
+
+**Model training and evaluation**
+- Train the model:
+```python
+import torch
+import torch.nn as nn
+from pthelper import trainer, utils
+
+epochs = 5
+model = PyTorchModel()
+loss_fn = nn.BCEWithLogitsLoss()
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+logger = utils.get_logger()
+pt_trainer = trainer.PTHelper(model, loss_fn, optimizer, logger, num_classes=1)
+for i in range(epochs):
+    train_loss = pt_trainer.train(train_dataloader, epoch=i)
+    valid_loss, predictions, targets = pt_trainer.evaluate(valid_dataloader)
+```
