@@ -37,3 +37,6 @@ for i in range(epochs):
     train_loss = pt_trainer.train(train_dataloader, epoch=i)
     valid_loss, predictions, targets = pt_trainer.evaluate(valid_dataloader)
 ```
+
+## Scope
+Right now, only binary and multi-class classification tasks are supported. In future releases, more functionality will be added like autoencoders, RNNs, GANs, etc.
