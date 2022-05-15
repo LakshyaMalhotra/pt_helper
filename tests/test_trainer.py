@@ -30,7 +30,7 @@ class ToyModel:
         )
         self.criterion = nn.BCEWithLogitsLoss()
         self.optimizer = torch.optim.SGD(self.model.parameters(), lr=0.01)
-        self.train_dataloader = torch.utils.data.DataLoader(
+        self.dataloader = torch.utils.data.DataLoader(
             DummyDataset(), batch_size=self.bs
         )
         self.device = torch.device("cpu")
@@ -41,48 +41,34 @@ def get_model_attrs():
     return ToyModel()
 
 
-def test_train(get_model_attrs, capsys):
-    train_obj = get_model_attrs
+class TestPTHelper:
+    def test_train(self, get_model_attrs, capsys):
+        train_obj = get_model_attrs
 
-    pt_trainer = trainer.PTHelper(
-        train_obj.model,
-        train_obj.device,
-        train_obj.criterion,
-        train_obj.optimizer,
-        num_classes=train_obj.num_classes,
-    )
-    losses = pt_trainer.train(
-        train_obj.train_dataloader, epoch=1, print_every=1
-    )
-    captured_sysout = capsys.readouterr()
-    assert ("Epoch: [2][5 / 5]" in captured_sysout.out) and (
-        isinstance(losses, float) and ~np.isnan(losses)
-    )
+        pt_trainer = trainer.PTHelper(
+            train_obj.model,
+            train_obj.device,
+            train_obj.criterion,
+            train_obj.optimizer,
+            num_classes=train_obj.num_classes,
+        )
+        losses = pt_trainer.train(train_obj.dataloader, epoch=1, print_every=1)
+        captured_sysout = capsys.readouterr()
+        assert ("Epoch: [2][5 / 5]" in captured_sysout.out) and (
+            isinstance(losses, float) and ~np.isnan(losses)
+        )
 
-
-# class TestPTHelper:
-#     def test_train(self):
-#         bs = 2
-#         num_classes = 1
-#         model = nn.Sequential(
-#             nn.Linear(28 * 28, 16), nn.Linear(16, num_classes)
-#         )
-#         criterion = (
-#             nn.BCEWithLogitsLoss()
-#             if num_classes == 1
-#             else nn.CrossEntropyLoss()
-#         )
-#         optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
-#         device = torch.device("cpu")
-#         train_dataloader = torch.utils.data.DataLoader(
-#             DummyDataset(), batch_size=bs
-#         )
-#         pt_trainer = trainer.PTHelper(
-#             model,
-#             device,
-#             criterion,
-#             optimizer,
-#             num_classes=num_classes,
-#         )
-#         losses = pt_trainer.train(train_dataloader, epoch=1, print_every=2)
-#         assert isinstance(losses, float) and ~np.isnan(losses)
+    def test_evaluate(self, get_model_attrs, capsys):
+        eval_obj = get_model_attrs
+        pt_evaluator = trainer.PTHelper(
+            eval_obj.model,
+            eval_obj.device,
+            eval_obj.criterion,
+            eval_obj.optimizer,
+            num_classes=eval_obj.num_classes,
+        )
+        losses = pt_evaluator.evaluate(eval_obj.dataloader, print_every=1)
+        captured_sysout = capsys.readouterr()
+        assert ("Evaluating: [5 / 5]" in captured_sysout.out) and (
+            isinstance(losses, tuple) and ~np.isnan(losses[0])
+        )
