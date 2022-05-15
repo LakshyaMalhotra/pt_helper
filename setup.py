@@ -7,14 +7,14 @@ with open("README.md", "r", encoding="utf-8") as desc_file:
 setup(
     name="pthelper",
     packages=find_packages(exclude=[]),
-    version="0.1.1",
+    version="0.1.2",
     license="MIT",
     description="pthelper - boilerplate code for training, logging and evaluation in PyTorch.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Lakshya Malhotra",
     author_email="lakshya9009@gmail.com",
-    url="https://github.com/LakshyaMalhotra/pt_trainer",
+    url="https://github.com/LakshyaMalhotra/pt_helper",
     keywords=[
         "artificial-intelligence",
         "deep-learning",
@@ -23,7 +23,7 @@ setup(
         "torchinfo",
         "model",
     ],
-    install_requires=["torch>=1.8", "torchinfo>=1.6.5", "numpy>=1.22.3"],
+    install_requires=["torch>=1.10.1", "torchinfo>=1.6.0", "numpy>=1.22.0"],
     classifiers=[
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "License :: OSI Approved :: MIT License",
