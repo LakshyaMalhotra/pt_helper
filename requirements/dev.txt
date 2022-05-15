@@ -1,0 +1,4 @@
+-r prod.txt
+
+# additional packages required for development
+pytest==7.1.2
